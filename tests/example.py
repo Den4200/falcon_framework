@@ -19,3 +19,13 @@ class BooksHandler:
 
     def get(self, req, resp):
         resp.text = "Books Page"
+
+    def post(self, req, resp):
+        resp.text = "Endpoint to create a book"
+
+@app.route('/template/{title}/{name}')
+def template_(req, resp, **kwargs):
+    resp.body = app.template(
+        'index.html',
+        context=kwargs
+    )

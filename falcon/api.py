@@ -1,12 +1,21 @@
+import os
 import inspect
 from parse import parse
 from webob import Request, Response
+from requests import Session as RequestsSession
+from jinja2 import Environment, FileSystemLoader
+from wsgiadapter import WSGIAdapter as RequestsWSGIAdapter
 
 
 class Api:
 
-    def __init__(self):
+    def __init__(self, templates_dir='templates'):
         self.routes = dict()
+        self.templates_env = Environment(
+            loader=FileSystemLoader(
+                os.path.abspath(templates_dir)
+            )
+        )
 
     def __call__(self, environ, start_response):
         request = Request(environ)
@@ -57,6 +66,19 @@ class Api:
 
         return response
 
+    def template(self, template_name, context=None):
+        if context is None:
+            context = dict()
+
+        return self.templates_env.get_template(
+            template_name
+        ).render(**context).encode()
+
     def default_response(self, response):
         response.status_code = 404
         response.text = 'Not found.'
+
+    def test_session(self, base_url='http://testserver'):
+        session = RequestsSession()
+        session.mount(prefix=base_url, adapter=RequestsWSGIAdapter(self))
+        return session

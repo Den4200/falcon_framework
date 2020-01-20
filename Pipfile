@@ -4,11 +4,15 @@ url = "https://pypi.org/simple"
 verify_ssl = true
 
 [dev-packages]
+pytest = "*"
 
 [packages]
 webob = "*"
 parse = "*"
 gunicorn = "*"
+requests = "*"
+requests-wsgi-adapter = "*"
+jinja2 = "*"
 
 [requires]
 python_version = "3.6"
